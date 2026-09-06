@@ -5,45 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Crystal Dash — Kemal.OS</title>
   <style>
-    :root { --bg:#070b0d; --sand:#c9a15a; --cyan:#3dffc8; --amber:#f3c56b; --line:#2d6b66; }
+    :root { --bg:#070b0d; --cyan:#3dffc8; --line:#2d6b66; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; background: var(--bg); color: #e8f4f1; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; overflow: hidden; touch-action: none; }
-    .wrap { height: 100%; display: flex; flex-direction: column; }
-    header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); background: #05080a; font-size: 12px; letter-spacing: 1px; color: #9ec9c2; }
-    header strong { color: var(--cyan); letter-spacing: 2px; }
-    canvas { flex: 1; width: 100%; display: block; background: #10242a; }
-    .hud { position: fixed; inset: 56px 16px auto 16px; display: flex; justify-content: space-between; pointer-events: none; font-size: 13px; color: #d7eef0; text-shadow: 0 1px 8px #000; }
+    canvas { width: 100%; height: 100%; display: block; }
+    .hud { position: fixed; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; pointer-events: none; font-size: 14px; text-shadow: 0 1px 8px #000; z-index: 2; }
     .hud b { color: var(--cyan); }
-    .overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(5, 8, 10, 0.72); backdrop-filter: blur(6px); }
-    .card { width: min(420px, calc(100vw - 32px)); border: 1px solid var(--line); border-radius: 16px; padding: 28px 24px; background: linear-gradient(180deg, #102226, #0b1418); text-align: center; }
-    .card h1 { color: var(--cyan); letter-spacing: 3px; font-size: 28px; margin-bottom: 8px; }
+    .hint { position: fixed; top: 42px; left: 16px; right: 16px; text-align: center; color: #9ec9c2; font-size: 12px; pointer-events: none; z-index: 2; }
+    .overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(5, 8, 10, 0.55); z-index: 3; }
+    .overlay.hidden { display: none; }
+    .card { width: min(420px, calc(100vw - 32px)); border: 1px solid var(--line); border-radius: 16px; padding: 28px 24px; background: #102226; text-align: center; }
+    .card h1 { color: var(--cyan); letter-spacing: 3px; font-size: 28px; margin-bottom: 10px; }
     .card p { color: #9ec9c2; font-size: 13px; line-height: 1.55; margin-bottom: 18px; }
     button { appearance: none; border: 1px solid var(--cyan); background: #102226; color: var(--cyan); padding: 12px 22px; border-radius: 10px; font: inherit; letter-spacing: 2px; cursor: pointer; }
-    button:hover { background: #16333a; }
-    .hidden { display: none; }
-    footer { padding: 8px 16px 12px; font-size: 11px; color: #6e8883; text-align: center; border-top: 1px solid #163033; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <span><strong>KEMAL.OS</strong> // CRYSTAL DASH</span>
-      <span>стрелки или тап по сторонам</span>
-    </header>
-    <canvas id="game"></canvas>
-  </div>
+  <canvas id="game"></canvas>
   <div class="hud">
     <div>SCORE <b id="score">0</b></div>
     <div>BEST <b id="best">0</b></div>
   </div>
+  <div class="hint" id="hint">KEMAL.OS // стрелки или тап по сторонам</div>
   <div class="overlay" id="overlay">
     <div class="card">
       <h1>CRYSTAL DASH</h1>
-      <p id="msg">Лови бирюзовые кристаллы и уворачивайся от камней. Чем дальше, тем быстрее пустыня.</p>
+      <p id="msg">Лови бирюзовые кристаллы, уворачивайся от камней. Клик или пробел — старт.</p>
       <button id="start" type="button">PLAY</button>
     </div>
   </div>
-  <footer>kemalzeitulaev-ai · iOS · Swift · C++ · Python</footer>
   <script>
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
@@ -53,56 +43,72 @@
     const bestEl = document.getElementById("best");
     const startBtn = document.getElementById("start");
     const bestKey = "crystal-dash-best";
-    let best = Number(localStorage.getItem(bestKey) || 0);
+    let best = 0;
+    try { best = Number(localStorage.getItem(bestKey) || 0); } catch (e) {}
     bestEl.textContent = best;
-    let W = 0, H = 0, running = false, raf = 0;
-    const state = { t: 0, score: 0, speed: 1, playerX: 0.5, items: [], stars: [] };
+
+    let W = 0, H = 0, running = false, raf = 0, last = 0, spawnT = 0;
+    const state = { score: 0, speed: 1, playerX: 0.5, items: [], stars: [] };
 
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = canvas.clientWidth;
-      H = canvas.clientHeight;
+      W = window.innerWidth;
+      H = window.innerHeight;
       canvas.width = Math.floor(W * dpr);
       canvas.height = Math.floor(H * dpr);
+      canvas.style.width = W + "px";
+      canvas.style.height = H + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
+
     function reset() {
-      state.t = 0; state.score = 0; state.speed = 1; state.playerX = 0.5; state.items = [];
-      state.stars = Array.from({ length: 40 }, () => ({ x: Math.random(), y: Math.random() * 0.55, r: Math.random() * 1.4 + 0.4, o: Math.random() }));
+      state.score = 0;
+      state.speed = 1;
+      state.playerX = 0.5;
+      state.items = [];
+      spawnT = 0;
+      state.stars = Array.from({ length: 50 }, () => ({
+        x: Math.random(), y: Math.random() * 0.55, r: Math.random() * 1.6 + 0.4, o: Math.random()
+      }));
       scoreEl.textContent = "0";
+      for (let i = 0; i < 3; i++) spawn("crystal", -0.12 - i * 0.18);
     }
-    function spawn(kind) {
+
+    function spawn(kind, y) {
       let x = 0.12 + Math.random() * 0.76;
       if (kind === "rock") {
-        for (let i = 0; i < 6; i++) {
-          if (Math.abs(x - state.playerX) > 0.16) break;
-          x = 0.12 + Math.random() * 0.76;
-        }
+        for (let i = 0; i < 8 && Math.abs(x - state.playerX) < 0.2; i++) x = 0.12 + Math.random() * 0.76;
       }
-      state.items.push({ kind, x, y: -0.08 });
+      state.items.push({ kind, x, y: y == null ? -0.1 : y });
     }
+
     function step(dt) {
-      state.t += dt;
-      state.speed = 1 + state.score / 28;
-      if (state.t > Math.max(0.28, 0.85 - state.score * 0.012)) {
-        state.t = 0;
-        spawn(state.score < 20 || Math.random() < 0.7 ? "crystal" : "rock");
+      state.speed = 1 + state.score / 40;
+      spawnT += dt;
+      if (spawnT > Math.max(0.32, 0.7 - state.score * 0.008)) {
+        spawnT = 0;
+        const kind = state.score < 30 || Math.random() < 0.72 ? "crystal" : "rock";
+        spawn(kind);
       }
-      for (const item of state.items) item.y += dt * 0.28 * state.speed;
+      const hitR = 0.0024;
       state.items = state.items.filter((item) => {
+        item.y += dt * 0.32 * state.speed;
         const dx = item.x - state.playerX;
-        const dy = item.y - 0.84;
-        const hit = dx * dx + dy * dy < 0.0032;
-        if (!hit) return item.y < 1.08;
-        if (item.kind === "crystal") {
+        const dy = item.y - 0.82;
+        const hit = dx * dx + dy * dy < hitR;
+        if (hit && item.kind === "crystal") {
           state.score += 10;
           scoreEl.textContent = String(state.score);
           return false;
         }
-        gameOver();
-        return false;
+        if (hit && item.kind === "rock") {
+          gameOver();
+          return false;
+        }
+        return item.y < 1.12;
       });
     }
+
     function roundRect(x, y, w, h, r) {
       ctx.beginPath();
       ctx.moveTo(x + r, y);
@@ -112,16 +118,17 @@
       ctx.arcTo(x, y, x + w, y, r);
       ctx.closePath();
     }
+
     function draw() {
       const g = ctx.createLinearGradient(0, 0, 0, H);
       g.addColorStop(0, "#16343d");
-      g.addColorStop(0.45, "#2a5a58");
+      g.addColorStop(0.5, "#2a5a58");
       g.addColorStop(1, "#c9a15a");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
-      ctx.fillStyle = "rgba(243,226,168,0.9)";
+      ctx.fillStyle = "rgba(243,226,168,0.92)";
       ctx.beginPath();
-      ctx.arc(W * 0.82, H * 0.16, 36, 0, Math.PI * 2);
+      ctx.arc(W * 0.82, H * 0.16, 40, 0, Math.PI * 2);
       ctx.fill();
       for (const s of state.stars) {
         ctx.globalAlpha = 0.35 + s.o * 0.65;
@@ -129,80 +136,115 @@
         ctx.fillRect(s.x * W, s.y * H, s.r, s.r);
       }
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "rgba(141,106,56,0.55)";
+      ctx.fillStyle = "rgba(141,106,56,0.6)";
       ctx.beginPath();
-      ctx.moveTo(0, H * 0.72);
-      ctx.quadraticCurveTo(W * 0.3, H * 0.62, W * 0.55, H * 0.7);
-      ctx.quadraticCurveTo(W * 0.8, H * 0.78, W, H * 0.66);
-      ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.fill();
+      ctx.moveTo(0, H * 0.7);
+      ctx.quadraticCurveTo(W * 0.3, H * 0.6, W * 0.55, H * 0.68);
+      ctx.quadraticCurveTo(W * 0.8, H * 0.76, W, H * 0.64);
+      ctx.lineTo(W, H);
+      ctx.lineTo(0, H);
+      ctx.fill();
+
       for (const item of state.items) {
-        const x = item.x * W, y = item.y * H;
+        const x = item.x * W;
+        const y = item.y * H;
         if (item.kind === "crystal") {
           ctx.fillStyle = "#3dffc8";
           ctx.beginPath();
-          ctx.moveTo(x, y - 12); ctx.lineTo(x + 8, y); ctx.lineTo(x, y + 12); ctx.lineTo(x - 8, y);
-          ctx.closePath(); ctx.fill();
+          ctx.moveTo(x, y - 16);
+          ctx.lineTo(x + 11, y);
+          ctx.lineTo(x, y + 16);
+          ctx.lineTo(x - 11, y);
+          ctx.closePath();
+          ctx.fill();
         } else {
           ctx.fillStyle = "#6d5330";
-          ctx.beginPath(); ctx.ellipse(x, y, 14, 10, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(x, y, 16, 12, 0, 0, Math.PI * 2);
+          ctx.fill();
           ctx.fillStyle = "#d7c4a1";
-          ctx.beginPath(); ctx.ellipse(x - 3, y - 2, 6, 4, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(x - 4, y - 3, 7, 4, 0, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
-      const px = state.playerX * W, py = H * 0.84;
-      ctx.fillStyle = "#1b2830"; ctx.strokeStyle = "#3dffc8"; ctx.lineWidth = 2;
-      roundRect(px - 32, py - 10, 64, 22, 6); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = "#2b6aa3"; roundRect(px - 18, py - 22, 36, 14, 4); ctx.fill();
+
+      const px = state.playerX * W;
+      const py = H * 0.82;
+      ctx.fillStyle = "#1b2830";
+      ctx.strokeStyle = "#3dffc8";
+      ctx.lineWidth = 2;
+      roundRect(px - 34, py - 10, 68, 24, 6);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#2b6aa3";
+      roundRect(px - 18, py - 22, 36, 14, 4);
+      ctx.fill();
       ctx.fillStyle = "#111";
-      ctx.beginPath(); ctx.arc(px - 16, py + 12, 6, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(px + 16, py + 12, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(px - 18, py + 14, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(px + 18, py + 14, 7, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = "#3dffc8";
-      ctx.beginPath(); ctx.arc(px - 16, py + 12, 2, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(px + 16, py + 12, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(px - 18, py + 14, 2.4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(px + 18, py + 14, 2.4, 0, Math.PI * 2); ctx.fill();
     }
-    let last = 0;
+
     function loop(ts) {
       if (!running) return;
       const dt = Math.min(0.033, (ts - last) / 1000 || 0.016);
-      last = ts; step(dt); draw();
+      last = ts;
+      step(dt);
+      draw();
       raf = requestAnimationFrame(loop);
     }
+
     function start() {
       overlay.classList.add("hidden");
-      reset(); running = true; last = performance.now();
+      reset();
+      running = true;
+      last = performance.now();
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(loop);
     }
+
     function gameOver() {
       running = false;
       if (state.score > best) {
         best = state.score;
-        localStorage.setItem(bestKey, String(best));
+        try { localStorage.setItem(bestKey, String(best)); } catch (e) {}
         bestEl.textContent = best;
       }
-      msg.textContent = "Пустыня догнала. Счёт: " + state.score + ". Рекорд: " + best + ".";
+      msg.textContent = "Пустыня догнала. Счёт: " + state.score + ". Рекорд: " + best + ". Нажми PLAY.";
       overlay.classList.remove("hidden");
     }
-    function moveTo(ratio) { state.playerX = Math.max(0.08, Math.min(0.92, ratio)); }
+
+    function moveTo(ratio) {
+      state.playerX = Math.max(0.08, Math.min(0.92, ratio));
+    }
+
     window.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") state.playerX = Math.max(0.08, state.playerX - 0.07);
-      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") state.playerX = Math.min(0.92, state.playerX + 0.07);
-      if ((e.key === " " || e.key === "Enter") && !running) start();
-    });
-    canvas.addEventListener("pointerdown", (e) => {
-      const rect = canvas.getBoundingClientRect();
-      moveTo((e.clientX - rect.left) / rect.width);
-      if (!running) start();
-    });
-    canvas.addEventListener("pointermove", (e) => {
-      if (e.buttons) {
-        const rect = canvas.getBoundingClientRect();
-        moveTo((e.clientX - rect.left) / rect.width);
+      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") state.playerX = Math.max(0.08, state.playerX - 0.08);
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") state.playerX = Math.min(0.92, state.playerX + 0.08);
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        if (!running) start();
       }
     });
-    startBtn.addEventListener("click", start);
+    window.addEventListener("pointerdown", (e) => {
+      if (!running) {
+        start();
+        return;
+      }
+      moveTo(e.clientX / window.innerWidth);
+    });
+    window.addEventListener("pointermove", (e) => {
+      if (running && e.buttons) moveTo(e.clientX / window.innerWidth);
+    });
+    startBtn.addEventListener("click", (e) => { e.stopPropagation(); start(); });
     window.addEventListener("resize", () => { resize(); draw(); });
-    resize(); draw();
+    resize();
+    reset();
+    draw();
+    start();
   </script>
 </body>
 </html>

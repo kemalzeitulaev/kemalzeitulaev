@@ -7,6 +7,10 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="https://kemalzeitulaev-ai.github.io/kemalzeitulaev-ai/"><b>▶ PLAY CRYSTAL DASH</b></a>
+</p>
+
 <h1 align="center">Kemal Zeitulaev</h1>
 <p align="center">
   <b>iOS developer</b> · Swift, C++ и Python<br/>
