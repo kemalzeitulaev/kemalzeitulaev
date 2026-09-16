@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="https://kemalzeitulaev-ai.github.io/kemalzeitulaev-ai/"><b>▶ PLAY CRYSTAL DASH</b></a>
+  <a href="https://kemalzeitulaev.github.io/kemalzeitulaev/"><b>▶ PLAY CRYSTAL DASH</b></a>
 </p>
 
 <h1 align="center">Kemal Zeitulaev</h1>
@@ -64,7 +64,7 @@ tools      Xcode · Git · REST
 На заставке крутится скринсейвер. Нажми баннер — и можно поиграть: лови кристаллы, объезжай камни, стрелки или тап по сторонам экрана.
 
 <p align="center">
-  <a href="https://kemalzeitulaev-ai.github.io/kemalzeitulaev/"><b>открыть игру →</b></a>
+  <a href="https://kemalzeitulaev.github.io/kemalzeitulaev/"><b>открыть игру →</b></a>
 </p>
 
 <br/>
@@ -72,12 +72,12 @@ tools      Xcode · Git · REST
 ### статистика
 
 <p align="center">
-  <img height="160" src="https://github-readme-stats.vercel.app/api?username=kemalzeitulaev-ai&show_icons=true&theme=radical&hide_border=true&bg_color=070b0d&title_color=3dffc8&icon_color=3dffc8&text_color=d7eef0" alt="GitHub stats" />
+  <img height="160" src="https://github-readme-stats.vercel.app/api?username=kemalzeitulaev&show_icons=true&theme=radical&hide_border=true&bg_color=070b0d&title_color=3dffc8&icon_color=3dffc8&text_color=d7eef0" alt="GitHub stats" />
   <img height="160" src="https://github-readme-stats.vercel.app/api/top-langs/?username=kemalzeitulaev&layout=compact&theme=radical&hide_border=true&bg_color=070b0d&title_color=3dffc8&text_color=d7eef0" alt="Top languages" />
 </p>
 
 <p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=kemalzeitulaev-ai&theme=radical&hide_border=true&background=070b0d&ring=3dffc8&fire=f3c56b&currStreakLabel=3dffc8" alt="GitHub streak" />
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=kemalzeitulaev&theme=radical&hide_border=true&background=070b0d&ring=3dffc8&fire=f3c56b&currStreakLabel=3dffc8" alt="GitHub streak" />
 </p>
 
 ---
