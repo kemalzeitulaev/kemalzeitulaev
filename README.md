@@ -1,8 +1,8 @@
 <p align="center">
-  <a href="https://kemalzeitulaev-ai.github.io/kemalzeitulaev-ai/">
+  <a href="https://kemalzeitulaev.github.io/kemalzeitulaev/">
     <img src="assets/hero.jpg" alt="Kemal Zeitulaev" width="100%" />
   </a>
-  <a href="https://kemalzeitulaev-ai.github.io/kemalzeitulaev-ai/">
+  <a href="https://kemalzeitulaev.github.io/kemalzeitulaev/">
     <img src="assets/arcade.svg" alt="Crystal Dash" width="100%" />
   </a>
 </p>
@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="https://kemalzeitulaev-ai.github.io/kemalzeitulaev-ai/">
+  <a href="https://kemalzeitulaev.github.io/kemalzeitulaev/">
     <img src="https://img.shields.io/badge/play_Crystal_Dash-102226?style=for-the-badge&color=102226" alt="Play Crystal Dash" />
   </a>
   <img src="https://img.shields.io/badge/Swift-F05138?style=for-the-badge&logo=swift&logoColor=white" alt="Swift" />
@@ -52,10 +52,10 @@ tools      Xcode · Git · REST
 
 | репозиторий | о чём |
 |---|---|
-| [CareMom](https://github.com/kemalzeitulaev-ai/CareMom) | приложение для мам |
-| [MedNotAi](https://github.com/kemalzeitulaev-ai/MedNotAi) | AI-заметки для медицины |
-| [Aip](https://github.com/kemalzeitulaev-ai/Aip) | текущий эксперимент |
-| [labABC](https://github.com/kemalzeitulaev-ai/labABCKemalZeitulaev-i-2-25) | C++ лабораторные |
+| [CareMom](https://github.com/kemalzeitulaev/CareMom) | приложение для мам |
+| [MedNotAi](https://github.com/kemalzeitulaev/MedNotAi) | AI-заметки для медицины |
+| [Aip](https://github.com/kemalzeitulaev/Aip) | текущий эксперимент |
+| [labABC](https://github.com/kemalzeitulaev/labABCKemalZeitulaev-i-2-25) | C++ лабораторные |
 
 <br/>
 
@@ -64,7 +64,7 @@ tools      Xcode · Git · REST
 На заставке крутится скринсейвер. Нажми баннер — и можно поиграть: лови кристаллы, объезжай камни, стрелки или тап по сторонам экрана.
 
 <p align="center">
-  <a href="https://kemalzeitulaev-ai.github.io/kemalzeitulaev-ai/"><b>открыть игру →</b></a>
+  <a href="https://kemalzeitulaev-ai.github.io/kemalzeitulaev/"><b>открыть игру →</b></a>
 </p>
 
 <br/>
@@ -73,7 +73,7 @@ tools      Xcode · Git · REST
 
 <p align="center">
   <img height="160" src="https://github-readme-stats.vercel.app/api?username=kemalzeitulaev-ai&show_icons=true&theme=radical&hide_border=true&bg_color=070b0d&title_color=3dffc8&icon_color=3dffc8&text_color=d7eef0" alt="GitHub stats" />
-  <img height="160" src="https://github-readme-stats.vercel.app/api/top-langs/?username=kemalzeitulaev-ai&layout=compact&theme=radical&hide_border=true&bg_color=070b0d&title_color=3dffc8&text_color=d7eef0" alt="Top languages" />
+  <img height="160" src="https://github-readme-stats.vercel.app/api/top-langs/?username=kemalzeitulaev&layout=compact&theme=radical&hide_border=true&bg_color=070b0d&title_color=3dffc8&text_color=d7eef0" alt="Top languages" />
 </p>
 
 <p align="center">
@@ -86,3 +86,7 @@ tools      Xcode · Git · REST
   <i>собираю продукты, которые хочется открыть ещё раз</i><br/>
   <a href="mailto:kemalzeitulaev@gmail.com">kemalzeitulaev@gmail.com</a>
 </p>
+
+
+## 🌐 Демо-версия
+[Открыть демо](https://kemalzeitulaev.github.io/Aip/)
