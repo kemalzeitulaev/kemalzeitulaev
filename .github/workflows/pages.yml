@@ -1,4 +1,4 @@
-name: Deploy Crystal Dash
+name: Deploy Porsche site
 
 on:
   push:
