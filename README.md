@@ -82,3 +82,7 @@ tools      Xcode · Git · REST
   <i>собираю продукты, которые хочется открыть ещё раз</i><br/>
   <a href="mailto:kemalzeitulaev@gmail.com">kemalzeitulaev@gmail.com</a>
 </p>
+
+
+## 🌐 Демо-версия
+[Открыть демо](https://kemalzeitulaev.github.io/Aip/)
