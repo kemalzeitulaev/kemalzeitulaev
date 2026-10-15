@@ -89,4 +89,4 @@ tools      Xcode · Git · REST
 
 
 ## 🌐 Демо-версия
-[Открыть демо](https://kemalzeitulaev.github.io/Aip/)
+[Открыть демо](https://kemalzeitulaev.github.io/Aip/tc/)
